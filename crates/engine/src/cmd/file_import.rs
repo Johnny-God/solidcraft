@@ -541,6 +541,7 @@ pub(crate) fn add_in_component(
     put_bodies(s, &names, &moves);
     let rigid_group = if plan.places.is_empty() { None } else { Some(add_rigid_group(s, top, made)?) };
     s.active_sketch = None;
+    s.sketching_view = None;
     if let Some(prepared) = prepared {
         s.model.prime_mesh_import(id, prepared);
     }
@@ -705,6 +706,7 @@ pub(crate) fn add_design(s: &mut Session, design: &solidcraft_io::NativeDesign, 
         made.push(id);
     }
     s.active_sketch = None;
+    s.sketching_view = None;
     s.refresh();
     if let Some(e) = made.iter().find_map(|id| s.model.result(*id).and_then(|r| r.error.clone())) {
         return Err(EngineError::Other(e));
