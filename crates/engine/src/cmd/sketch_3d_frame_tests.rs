@@ -87,8 +87,10 @@ fn wire_frame_pending_moves_other_owner_and_legacy_world_do_not_join() {
     run(&mut s, "component.activate", json!({"component":0}));
     let root = run(&mut s, "sketch.create", json!({"plane":"XY","name":"Root path"}))["sketch"].as_u64().unwrap();
     run(&mut s, "sketch.options", json!({"sketch_3d":true}));
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     let unrelated = run(&mut s, "component.create", json!({"name":"Unrelated"}))["occurrence"].as_u64().unwrap();
     run(&mut s, "occurrence.move", json!({"occurrence":unrelated,"translate":[100,200,300]}));
+    run(&mut s, "sketch.edit", json!({"sketch":root}));
     run(&mut s, "sketch.point3d", json!({"sketch":root,"point":[9,8,7]}));
     near(s.doc.sketch(root).unwrap().wires[0].fit[0], Vec3::new(9.0, 8.0, 7.0));
 }
@@ -167,18 +169,21 @@ fn wire_frame_include_other_component_refresh_break_lost_and_reopen() {
 fn wire_frame_pipe_component_and_world_paths_have_analytic_volume_and_position() {
     for space in [WireSpace::Component, WireSpace::World] {
         let (mut s, _, first, second) = second_frame();
+        let sketch = s.active_sketch.unwrap();
+        run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
         if space == WireSpace::World {
             // A single placed owner lets an immutable world path stay physically fixed;
             // replicated solids still follow their occurrence placements by design.
             run(&mut s, "selection.delete", json!({"items":[{"type":"occurrence","path":[first]}]}));
         }
-        let sketch = s.active_sketch.unwrap();
         let wire = if space == WireSpace::Component {
             run(&mut s, "sketch.line3d", json!({"points":[[17,32,45],[17,32,55]]}))["curves"][0].as_str().unwrap().to_string()
         } else {
             s.doc_mut().sketch_mut(sketch).unwrap().add_drawn_wire(&[Vec3::new(17.0, 32.0, 45.0), Vec3::new(17.0, 32.0, 55.0)]).unwrap()
         };
-        run(&mut s, "sketch.finish", json!({}));
+        if s.active_sketch.is_some() {
+            run(&mut s, "sketch.finish", json!({}));
+        }
         run(&mut s, "solid.pipe", json!({"path_sketch":sketch,"path":[wire],"diameter":4}));
         let world = s.world_state().unwrap();
         let body = world.bodies.last().unwrap();

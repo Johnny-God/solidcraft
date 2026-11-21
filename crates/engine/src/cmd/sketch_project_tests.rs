@@ -839,6 +839,7 @@ fn deleting_one_edge_of_a_projected_face_keeps_the_others_as_they_were() {
     let id = run(&mut s, "sketch.create", json!({"plane": "XY", "offset": 15}))["sketch"].as_u64().unwrap();
     let r = run(&mut s, "sketch.project", json!({"refs": [{"face": [10, 10, 10]}]}));
     run(&mut s, "sketch.delete", json!({"entities": ids(&r["created"]["curves"])}));
+    run(&mut s, "sketch.point", json!({"point": [1, 1]}));
     run(&mut s, "sketch.finish", json!({}));
     assert!(evaluated_curves(&s, id).is_empty());
     assert!(s.doc.sketch(id).unwrap().links.is_empty());

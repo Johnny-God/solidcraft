@@ -1762,6 +1762,7 @@ fn a_fillet_on_a_spline_edge_fits_a_window_threads_stack() {
 fn timeline_joint_folders_are_mixed_saved_and_undoable() {
     let mut s = Session::default();
     run(&mut s, "sketch.create", json!({"plane":"XY", "name":"Profile"}));
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "component.create", json!({"name":"Part"}));
     let joint = run(&mut s, "joint.as_built", json!({"type":"revolute", "a":0, "b":"Part", "name":"Hinge"}))["joint"].as_u64().unwrap();
     let folder = run(&mut s, "timeline.group", json!({"name":"Mixed", "features":["Profile"], "joints":["Hinge", joint]}))["group"].as_u64().unwrap();

@@ -5969,6 +5969,7 @@ fn a_deleted_sketch_point_drops_only_its_own_hole() {
     let mut s = Session::default();
     run(&mut s, "solid.box", json!({"corner": [0, 0, 0], "length": 60, "width": 20, "height": 10}));
     run(&mut s, "sketch.create", json!({"plane": {"origin": [0, 0, 10], "x_dir": [1, 0, 0], "y_dir": [0, 1, 0]}, "name": "Pts"}));
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.point", json!({"point": [15, 10], "id": "a"}));
     run(&mut s, "sketch.point", json!({"point": [45, 10], "id": "b"}));
     run(&mut s, "sketch.finish", json!({}));

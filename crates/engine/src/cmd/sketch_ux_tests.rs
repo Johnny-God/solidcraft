@@ -660,6 +660,7 @@ fn palette_options_are_kept_with_each_sketch() {
     assert!(v.hide_dimensions && v.no_snap && v.slice && v.three_d && !v.hide_points);
     // Another sketch starts with the defaults; the first keeps its options after finishing.
     let first = s.active_sketch.expect("sketch");
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     run(&mut s, "sketch.create", json!({"plane": "XZ"}));
     assert_eq!(sketch(&s).view, solidcraft_sketch::SketchView::default());

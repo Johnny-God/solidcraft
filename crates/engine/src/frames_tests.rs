@@ -1292,6 +1292,7 @@ fn cross_component_sketch_refs_follow_the_component() {
     // A sketch on the child's XY in its first placement, and a plane offset from the same plane.
     let plane = crate::origins::key(&[first, child], "XY");
     let sid = run(&mut s, "sketch.create", json!({"plane": plane, "name": "On child"}))["sketch"].as_u64().unwrap();
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     let f = s.doc.feature(sid).unwrap();
     let solidcraft_doc::FeatureKind::Sketch { plane: solidcraft_doc::PlaneRef::Datum { datum }, .. } = &f.kind else { panic!("{:?}", f.kind) };
     assert_eq!(datum.item, DatumItem::XY);

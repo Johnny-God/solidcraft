@@ -3794,6 +3794,7 @@ mod tests {
         let mut s = Session::default();
         run(&mut s, "solid.box", json!({"length": 10, "width": 10, "height": 10}));
         run(&mut s, "sketch.create", json!({"plane": "XY"}));
+        run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
         let g = run(&mut s, "browser.group", json!({"folder": "bodies"}))["group"].as_u64().unwrap();
         let created = run(&mut s, "component.create", json!({"name": "Part"}));
         let occ = created["occurrence"].as_u64().unwrap();

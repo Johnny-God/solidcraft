@@ -367,6 +367,7 @@ fn symmetric_extrude_with_symmetric_offset_leaves_clearance_gap_and_follows_para
     let on_cap = s.execute("sketch.create", &json!({"plane": {"face": [5, 5, 8]}, "name": "OnPosCap", "project_edges": false})).unwrap()["sketch"]
         .as_u64()
         .unwrap();
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     run(&mut s, "parameters.change", json!({"name": name, "expression": "20 mm"}));
     assert!((s.model.state().sketch(on_cap).unwrap().plane.origin.z - 13.0).abs() < 1e-7);

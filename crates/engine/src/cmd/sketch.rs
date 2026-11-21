@@ -1651,7 +1651,7 @@ pub(crate) fn finish_model_edit(s: &mut Session, restore: bool) -> Result<Value>
         s.selection.clear();
     }
     if let Some(id) = id
-        && s.doc.sketch(id).is_ok_and(crate::edit_start::empty_geometry)
+        && sketch_store::read(&s.doc, id).is_ok_and(crate::edit_start::empty_geometry)
     {
         s.doc_mut().delete_feature(id)?;
     }

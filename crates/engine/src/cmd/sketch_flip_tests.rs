@@ -107,6 +107,7 @@ fn a_construction_plane_flips_too_and_follows_its_parameter() {
     let id = run(&mut s, "sketch.create", json!({"plane": "P", "flip": true}))["sketch"].as_u64().unwrap();
     let p = sketch_plane(&s, id);
     assert!(close(p.origin, Vec3::new(0.0, 0.0, 7.0)) && close(p.normal(), -Vec3::Z), "{p:?}");
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     run(&mut s, "parameters.change", json!({"name": "h", "expression": "9 mm"}));
     let p = sketch_plane(&s, id);

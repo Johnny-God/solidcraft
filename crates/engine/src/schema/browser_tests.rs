@@ -773,6 +773,7 @@ fn redefine_sketch_note_matches_the_output_schema() {
     let mut run = |id: &str, p: Value| s.execute(id, &p).unwrap_or_else(|e| panic!("{id} {p}: {e}"));
     let part = run("component.create", json!({"name": "Part", "grounded": false}));
     let sk = run("sketch.create", json!({"plane": "XY"}))["sketch"].clone();
+    run("sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run("occurrence.move", json!({"occurrence": part["occurrence"], "translate": [10, 0, 0]}));
     let r = run("sketch.redefine", json!({"sketch": sk, "plane": {"x_dir": [1, 0, 0], "y_dir": [0, 1, 0]}, "author_path": [part["occurrence"]]}));
     let schema = output_schema_for::<RedefineSketchResult>();

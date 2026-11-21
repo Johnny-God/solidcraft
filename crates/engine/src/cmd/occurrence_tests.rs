@@ -1181,6 +1181,7 @@ fn component_list_gives_each_component_only_its_own_contents() {
     run(&mut s, "solid.box", json!({"length": 5, "width": 5, "height": 5, "name": "Base", "body_name": "Base"}));
     let (arm, arm_first) = created(&mut s, "Arm");
     run(&mut s, "sketch.create", json!({"plane": "XY", "name": "Arm sketch"}));
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "solid.box", json!({"corner": [0, 20, 0], "length": 2, "width": 2, "height": 2, "name": "Lug", "body_name": "Lug"}));
     let pin = run(&mut s, "component.create", json!({"name": "Pin", "parent": arm, "parent_path": [arm_first]}));
     let (pin, pin_first) = (pin["component"].as_u64().unwrap(), pin["occurrence"].as_u64().unwrap());
