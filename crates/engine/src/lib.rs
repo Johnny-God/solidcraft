@@ -28,8 +28,8 @@ pub mod drawing_scene;
 mod drawing_table_paper;
 pub mod drawing_view;
 pub mod easyprint;
-mod failure_codes;
 mod edit_start;
+mod failure_codes;
 pub mod frames;
 pub mod fuzz;
 #[cfg(not(target_arch = "wasm32"))]
