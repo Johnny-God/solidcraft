@@ -1812,10 +1812,6 @@ impl SolveApp {
             }
             match id {
                 "ui.appBarReset" => self.toolbar_custom.reset_app_bar(),
-                "sketch.create" | "sketch.edit" => {
-                    let before = self.settled_cam();
-                    self.look_at_opened_sketch(before);
-                }
                 "sketch.finish" | "sketch.cancel" => self.sketch_closed(v.get("sketch").and_then(Value::as_u64)),
                 // The sketch being edited has all new contents: a tool's picks named the old ones.
                 "sketch.replace" if v.get("sketch_id").and_then(Value::as_u64).is_some_and(|id| self.session.active_sketch == Some(id)) => {
@@ -2023,10 +2019,6 @@ impl SolveApp {
             Ok(value)
         });
         crate::sketch_view::project(self);
-        if r.is_ok() && self.session.active_sketch.is_some() && !self.sketch_finish_processing {
-            let before = self.settled_cam();
-            self.look_at_opened_sketch(before);
-        }
         self.finish_command(id, &r);
         plugin_events::command_completed(self, id, r.is_ok());
         if matches!(id, "select.mode" | "select.filter") {
