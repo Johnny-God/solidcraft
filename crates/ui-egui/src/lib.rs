@@ -3229,6 +3229,12 @@ impl SolveApp {
             return;
         }
         let marker = self.finish_sketch_for_edit();
+        // A Cancel still computing off the window thread stays a Cancel: the edit start below
+        // would otherwise finish the open sketch and keep what Cancel was to take back.
+        if self.session.active_sketch.is_some() && self.take_sketch_exit().as_deref() == Some("sketch.cancel") {
+            self.prepare_sketch_exit();
+            let _ = self.run("sketch.cancel", json!({"restore_marker": false}));
+        }
         if let Err(error) = crate::sketch_view::prepare_edit(self, "sketch.edit", &json!({"sketch":id})) {
             self.set_status(error, true);
             return;

@@ -637,6 +637,8 @@ mod tests {
         let owner = app.session.sketching_view.unwrap();
         let sketch = app.session.active_sketch;
         let other = app.docs.views.open(solidcraft_views::ViewKind::Model, None, false);
+        // `ViewSet::open` activates the new view; the owner stays the painted one until the compass moves.
+        app.docs.views.activate(owner);
         assert!(projection_locked(&app));
         app.viewport.compass_view = Some(other);
         assert!(!projection_locked(&app), "another view keeps its own projection control");

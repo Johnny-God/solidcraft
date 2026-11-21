@@ -195,6 +195,8 @@ fn host_keeps_legacy_canvas_cloud_and_attachment_drafts_with_only_visible_footpr
     let cloud = h.app.run("pointcloud.insert", json!({"path":path.to_string_lossy()})).unwrap()["cloud"].as_u64().unwrap();
     h.app.run("sketch.create", json!({"plane":"XY"})).unwrap();
     let sketch = h.app.session.active_sketch.unwrap();
+    // #19654 deletes an empty sketch on finish, so draw a line to keep the sketch the attachment draft redefines.
+    h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
     h.settle();
     crate::panel_runtime::enable_host_specimen(&mut h.app, "tabs").unwrap();
