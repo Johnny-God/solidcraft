@@ -1280,14 +1280,13 @@ fn sketch_options_and_compass_share_measured_clearance() {
                 );
             }
             if width > 1000.0 {
+                // #19654: starting another feature tool finishes the open sketch (owner-approved), so
+                // its editor no longer shares the view with Sketch Options; it opens in the view.
                 h.app.start("construct.plane.offset");
                 h.settle();
+                assert!(h.app.session.active_sketch.is_none(), "the construct tool finished the sketch");
                 let dialog = h.app.viewport.dialog_rect.unwrap();
                 let viewport = h.app.viewport.rect.unwrap();
-                assert!(
-                    (palette.left() - dialog.right() - SHELL_GAP).abs() < 2.0,
-                    "the floating editor opens beside Sketch Options: {dialog:?} / {palette:?}"
-                );
                 assert!(viewport.contains_rect(dialog));
             }
         }

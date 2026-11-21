@@ -428,13 +428,18 @@ fn with_model_keys_kept_out_the_extrude_key_in_a_sketch_does_nothing() {
 }
 
 #[test]
-fn a_construct_command_keeps_the_sketch_open() {
+fn a_construct_command_finishes_the_sketch_and_offers_to_edit_it() {
+    // #19654: starting another feature tool finishes the open sketch and offers Edit sketch
+    // (owner-approved), where a construct tool once kept the sketch open.
     let mut h = Harness::new();
     h.app.run("sketch.create", json!({"plane":"XY"})).unwrap();
-    let sketch = h.app.session.active_sketch;
+    h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
+    let sketch = h.app.session.active_sketch.unwrap();
     h.app.start("construct.plane.offset");
     h.settle();
-    assert_eq!(h.app.session.active_sketch, sketch);
+    assert_eq!(h.app.session.active_sketch, None, "the construct tool finished the sketch");
+    let notice = h.app.sketch_notices.latest_for(h.app.session.uid, 0).expect("Edit sketch is offered");
+    assert_eq!(notice.sketch, sketch);
 }
 
 #[test]

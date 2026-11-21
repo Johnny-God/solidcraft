@@ -68,6 +68,12 @@ pub(crate) fn changes_editor_fields(params: &Value) -> bool {
     })
 }
 
+/// An edit that names fields to set (`set: {...}`) and changes more than a name or visibility;
+/// a bare request (`{}`) only reads the object and keeps the open sketch.
+pub(crate) fn sets_editor_fields(params: &Value) -> bool {
+    params.get("set").is_some() && changes_editor_fields(params)
+}
+
 /// A pending occurrence move (`capture: false`) only places the part for now and records no
 /// history, so it leaves the sketch being edited open; a captured move is an edit.
 pub(crate) fn captures_move(params: &Value) -> bool {
