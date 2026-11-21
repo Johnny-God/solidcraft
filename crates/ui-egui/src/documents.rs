@@ -5458,6 +5458,9 @@ mod tests {
     #[test]
     fn design_tab_preferences_decide_which_views_open() {
         let mut h = crate::scenario::Harness::new();
+        // The classic switcher, which this test covers: since #19655 the default lets the focused
+        // view choose the workspace (`workspace_follows_view`).
+        h.app.preferences.workspace_follows_view = false;
         h.app.home.open = false;
         h.app.run("sketch.create", json!({"plane": "XY", "name": "Sketch1"})).unwrap();
         h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();

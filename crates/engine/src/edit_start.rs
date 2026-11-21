@@ -68,6 +68,12 @@ pub(crate) fn changes_editor_fields(params: &Value) -> bool {
     })
 }
 
+/// A pending occurrence move (`capture: false`) only places the part for now and records no
+/// history, so it leaves the sketch being edited open; a captured move is an edit.
+pub(crate) fn captures_move(params: &Value) -> bool {
+    params.get("capture").and_then(Value::as_bool).unwrap_or(true)
+}
+
 pub(crate) fn finished_reply(mut value: Value, event: Option<&SketchFinishEvent>) -> Value {
     if let Some(event) = event
         && let Some(object) = value.as_object_mut()
