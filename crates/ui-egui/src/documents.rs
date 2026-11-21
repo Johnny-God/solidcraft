@@ -5460,6 +5460,7 @@ mod tests {
         let mut h = crate::scenario::Harness::new();
         h.app.home.open = false;
         h.app.run("sketch.create", json!({"plane": "XY", "name": "Sketch1"})).unwrap();
+        h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
         h.frames(2);
         assert!(h.app.session.active_sketch.is_some(), "the sketch is entered");
         assert_eq!(h.app.docs.views.len(), 1, "but without a sub-tab");
@@ -5589,6 +5590,7 @@ mod tests {
         let path = std::env::temp_dir().join("solidcraft-remembered.scd").to_string_lossy().into_owned();
         h.app.session.path = Some(path.clone());
         h.app.run("sketch.create", json!({"plane": "XY", "name": "Sketch1"})).unwrap();
+        h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
         h.frames(2);
         h.app.run("sketch.finish", json!({})).unwrap();
         h.frames(2);

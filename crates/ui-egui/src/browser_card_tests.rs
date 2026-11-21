@@ -200,6 +200,7 @@ fn folder_visibility_target_clears_when_the_user_moves_on() {
         let mut h = Harness::new();
         h.app.run("solid.box", json!({"length":10,"width":10,"height":10,"body_name":"One"})).unwrap();
         h.app.run("sketch.create", json!({"plane":"XY"})).unwrap();
+        h.app.run("sketch.line", json!({"points":[[0,0],[10,0]]})).unwrap();
         h.app.run("sketch.finish", json!({})).unwrap();
         h.app.run("select.set", json!({"items":[Sel::Body {name:"One".into()}]})).unwrap();
         h.settle();
@@ -391,6 +392,7 @@ fn a_construction_row_renames_on_a_delayed_second_click() {
 fn browser_sketch_rename_stays_inline() {
     let mut h = Harness::new();
     h.app.run("sketch.create", json!({"plane":"XY","name":"Profile"})).unwrap();
+    h.app.run("sketch.line", json!({"points":[[0,0],[10,0]]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
     h.app.tree.expanded.insert("c0/sketches".into());
     h.settle();
@@ -414,8 +416,10 @@ fn browser_sketch_rename_stays_inline() {
 fn browser_sketches_after_history_marker_are_not_listed() {
     let mut h = Harness::new();
     h.app.run("sketch.create", json!({"plane":"XY","name":"Earlier"})).unwrap();
+    h.app.run("sketch.line", json!({"points":[[0,0],[10,0]]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
     h.app.run("sketch.create", json!({"plane":"XY","name":"Later"})).unwrap();
+    h.app.run("sketch.line", json!({"points":[[0,0],[10,0]]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
     h.app.run("timeline.roll_to", json!({"position":1})).unwrap();
     h.app.tree.expanded.insert("c0/sketches".into());
@@ -441,6 +445,7 @@ fn browser_card_shrinks_and_scrolls_without_covering_history() {
 
     for i in 0..35 {
         h.app.run("sketch.create", json!({"plane":"XY", "name":format!("Sketch{i}")})).unwrap();
+        h.app.run("sketch.line", json!({"points":[[0,0],[10,0]]})).unwrap();
         h.app.run("sketch.finish", json!({})).unwrap();
     }
     h.settle();
@@ -798,6 +803,7 @@ fn an_eye_at_the_row_end_takes_its_click_from_the_scroll_bar() {
     h.call("ui.resize", json!({"width":1400,"height":900}));
     for i in 0..35 {
         h.app.run("sketch.create", json!({"plane":"XY", "name":format!("Sketch{i}")})).unwrap();
+        h.app.run("sketch.line", json!({"points":[[0,0],[10,0]]})).unwrap();
         h.app.run("sketch.finish", json!({})).unwrap();
     }
     h.settle();
@@ -926,6 +932,7 @@ fn eye_drag_near_the_rows_bottom_edge_scrolls_them() {
     h.call("ui.resize", json!({"width":1400,"height":900}));
     for i in 0..35 {
         h.app.run("sketch.create", json!({"plane":"XY", "name":format!("Sketch{i}")})).unwrap();
+        h.app.run("sketch.line", json!({"points":[[0,0],[10,0]]})).unwrap();
         h.app.run("sketch.finish", json!({})).unwrap();
     }
     h.settle();
