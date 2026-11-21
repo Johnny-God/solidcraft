@@ -2471,6 +2471,7 @@ M30
         for (file, text) in [("outline.DXF", dxf.as_str()), ("outline.SVG", svg)] {
             h.app.run("file.new", json!({})).unwrap();
             h.app.run("sketch.create", json!({"plane":"YZ"})).unwrap();
+            h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
             h.app.run("sketch.finish", json!({})).unwrap();
             let path = h.dir.join(file).to_string_lossy().into_owned();
             std::fs::write(&path, text).unwrap();

@@ -1758,6 +1758,7 @@ mod tests {
         h.app.home.open = false;
         h.app.run("view.history_layout", json!({"dock":"left"})).unwrap();
         h.app.run("sketch.create", json!({"plane":"XY", "name":"Profile"})).unwrap();
+        h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
         h.app.run("sketch.finish", json!({})).unwrap();
         h.app.run("component.create", json!({"name":"Part"})).unwrap();
         for name in ["A", "B", "C"] {

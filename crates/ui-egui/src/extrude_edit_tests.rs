@@ -8,6 +8,9 @@ fn make(params: Value) -> Harness {
     make_in(Harness::new(), params)
 }
 fn make_in(mut h: Harness, params: Value) -> Harness {
+    // Since #19653 a sketch made by a command turns the view to face it; these tests build their
+    // model by command and work in the view the design had, so the sketch doesn't turn it.
+    h.app.preferences.sketch_open_look_at = false;
     h.app.run("sketch.create", json!({"plane":"XY","name":"Base"})).unwrap();
     h.app.run("sketch.rectangle.two_point", json!({"p0":[0,0],"p1":[10,10]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
@@ -1164,6 +1167,9 @@ fn double_clicking_a_face_of_a_moved_component_edits_its_feature() {
 fn surface_extrude_dialog_has_the_drag_arrow_on_every_side() {
     for (direction, tip_z) in [("positive", 10.0), ("negative", -10.0), ("symmetric", 5.0)] {
         let mut h = Harness::new();
+        // Since #19653 a sketch made by a command turns the view to face it; these tests build their
+        // model by command and work in the view the design had, so the sketch doesn't turn it.
+        h.app.preferences.sketch_open_look_at = false;
         h.app.run("sketch.create", json!({"plane":"XY","name":"Base"})).unwrap();
         h.app.run("sketch.rectangle.two_point", json!({"p0":[0,0],"p1":[10,10]})).unwrap();
         h.app.run("sketch.finish", json!({})).unwrap();

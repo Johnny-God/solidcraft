@@ -1705,6 +1705,7 @@ fn a_single_sheet_sketch_is_painted_when_its_last_step_finishes() {
     h.app.home.open = false;
     h.ctx.options_mut(|options| options.max_passes = 1.try_into().unwrap());
     h.app.run("sketch.create", json!({"plane": "XY"})).unwrap();
+    h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
     let drawing = h.app.run("drawing.create", json!({})).unwrap();
     crate::drawing_workspace::enter(&mut h.app, true).unwrap();

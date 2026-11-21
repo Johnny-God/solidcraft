@@ -282,6 +282,7 @@ fn with_rows_starting_closed_a_designs_folders_open_with_their_arrow_or_find_in_
     let mut h = crate::scenario::Harness::new();
     assert_eq!(h.call("ui.prefs", json!({"browser_rows_start_closed": true}))["ok"], true);
     h.app.run("sketch.create", json!({"plane":"XY","name":"Sketch1"})).unwrap();
+    h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
     h.app.run("solid.box", json!({"length":10,"width":10,"height":10,"body_name":"Block"})).unwrap();
     h.app.ui.show_browser = true;
@@ -645,6 +646,7 @@ fn feature_editor_browser_rows_follow_the_marker_and_return_after_cancel() {
     h.app.run("solid.extrude", json!({"sketch":"Base","distance":10,"name":"Depth"})).unwrap();
     let feature = h.app.session.doc.find_feature("Depth").unwrap().id;
     h.app.run("sketch.create", json!({"plane":"YZ","name":"Later sketch"})).unwrap();
+    h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
     h.app.run("construct.plane.offset", json!({"base":"XY","offset":20,"name":"Later plane"})).unwrap();
     super::prepare_model(&mut h.app);

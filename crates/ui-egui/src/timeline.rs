@@ -2221,6 +2221,7 @@ mod tests {
         let mut h = Harness::new();
         for i in 0..80 {
             h.app.run("sketch.create", json!({"plane": "XY", "name": format!("S{i}")})).unwrap();
+            h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
             h.app.run("sketch.finish", json!({})).unwrap();
         }
         h.frames(4);
@@ -2241,6 +2242,7 @@ mod tests {
         let mut h = Harness::new();
         for i in 0..200 {
             h.app.run("sketch.create", json!({"plane": "XY", "name": format!("S{i}")})).unwrap();
+            h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
             h.app.run("sketch.finish", json!({})).unwrap();
         }
         h.frames(4);
@@ -2287,10 +2289,12 @@ mod tests {
         let mut h = Harness::new();
         assert_eq!(h.call("ui.prefs", json!({"history_bar_groups": true}))["ok"], true);
         h.app.run("sketch.create", json!({"plane": "XY", "name": "Root sketch"})).unwrap();
+        h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
         h.app.run("sketch.finish", json!({})).unwrap();
         h.app.run("component.create", json!({"name": "Rig"})).unwrap();
         for i in 0..crate::timeline_fold::FOLD_FROM {
             h.app.run("sketch.create", json!({"plane": "XY", "name": format!("S{i}")})).unwrap();
+            h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
             h.app.run("sketch.finish", json!({})).unwrap();
         }
         h.app.run("component.activate", json!({"component": "root"})).unwrap();
@@ -2325,10 +2329,12 @@ mod tests {
         let mut h = Harness::new();
         assert_eq!(h.call("ui.prefs", json!({"history_bar_groups": true}))["ok"], true);
         h.app.run("sketch.create", json!({"plane": "XY", "name": "Root sketch"})).unwrap();
+        h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
         h.app.run("sketch.finish", json!({})).unwrap();
         h.app.run("component.create", json!({"name": "Copy"})).unwrap();
         for i in 0..crate::timeline_fold::FOLD_FROM {
             h.app.run("sketch.create", json!({"plane": "XY", "name": format!("C{i}")})).unwrap();
+            h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
             h.app.run("sketch.finish", json!({})).unwrap();
         }
         h.app.run("component.activate", json!({"component": "root"})).unwrap();
@@ -2742,6 +2748,7 @@ mod tests {
             h.app.run("view.history_layout", json!({"dock":if left { "left" } else { "bottom" }})).unwrap();
             for i in 0..80 {
                 h.app.run("sketch.create", json!({"plane": "XY", "name": format!("S{i}")})).unwrap();
+                h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
                 h.app.run("sketch.finish", json!({})).unwrap();
             }
             h.app.run("solid.box", json!({"length": 10, "width": 10, "height": 10, "name": "Last", "body_name": "Plate"})).unwrap();
@@ -2778,6 +2785,7 @@ mod tests {
                     .unwrap();
             for i in 0..80 {
                 h.app.run("sketch.create", json!({"plane": "XY", "name": format!("S{i}")})).unwrap();
+                h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
                 h.app.run("sketch.finish", json!({})).unwrap();
             }
             let hole = h
@@ -3651,6 +3659,7 @@ mod tests {
         h.app.run("component.create", json!({"name": "Rig"})).unwrap();
         for i in 0..crate::timeline_fold::FOLD_FROM {
             h.app.run("sketch.create", json!({"plane": "XY", "name": format!("S{i}")})).unwrap();
+            h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
             h.app.run("sketch.finish", json!({})).unwrap();
         }
         h.app.run("component.activate", json!({"component": "root"})).unwrap();
@@ -3977,6 +3986,7 @@ mod tests {
         let mut h = Harness::new();
         for i in 0..120 {
             h.app.run("sketch.create", json!({"plane": "XY", "name": format!("S{i}")})).unwrap();
+            h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
             h.app.run("sketch.finish", json!({})).unwrap();
         }
         h.frames(4);
@@ -3989,10 +3999,12 @@ mod tests {
         let mut h = Harness::new();
         assert_eq!(h.call("ui.prefs", json!({"history_bar_groups": true}))["ok"], true);
         h.app.run("sketch.create", json!({"plane": "XY", "name": "Root sketch"})).unwrap();
+        h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
         h.app.run("sketch.finish", json!({})).unwrap();
         h.app.run("component.create", json!({"name": "Rig"})).unwrap();
         for i in 0..crate::timeline_fold::FOLD_FROM {
             h.app.run("sketch.create", json!({"plane": "XY", "name": format!("S{i}")})).unwrap();
+            h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
             h.app.run("sketch.finish", json!({})).unwrap();
         }
         h.app.run("component.activate", json!({"component": "root"})).unwrap();

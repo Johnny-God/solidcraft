@@ -815,6 +815,7 @@ mod tests {
     fn browser_feature_sketch_only_has_one_sketch_row_and_no_features_folder() {
         let mut h = Harness::new();
         h.app.run("sketch.create", json!({"plane":"XY","name":"Sketch1"})).unwrap();
+        h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
         h.app.run("sketch.finish", json!({})).unwrap();
         h.app.tree.expanded.insert("c0/features".into());
         let saved = h.app.session.doc.to_json();

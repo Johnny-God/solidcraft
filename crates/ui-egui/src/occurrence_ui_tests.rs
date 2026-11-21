@@ -943,8 +943,10 @@ fn sketches_folder_moves_its_sketches_to_the_part_they_are_on() {
     let face = world.body(&body).unwrap().body.faces(0.01).unwrap().into_iter().max_by(|a, b| a.centroid.z.total_cmp(&b.centroid.z)).unwrap();
     let pick = json!({"face":[face.centroid.x,face.centroid.y,face.centroid.z],"body":body,"index":face.index,"path":[occurrence]});
     let on_face = h.app.run("sketch.create", json!({"name":"OnFace","plane":pick})).unwrap()["sketch"].as_u64().unwrap();
+    h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
     h.app.finish_sketch();
     let on_xy = h.app.run("sketch.create", json!({"name":"OnXY","plane":"XY"})).unwrap()["sketch"].as_u64().unwrap();
+    h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
     h.app.finish_sketch();
     let target = Target::Folder { component: 0, folder: "sketches".into(), scope: "c0".into() };
     let items = context_menu::items(&h.app, &target);
@@ -965,8 +967,10 @@ fn sketches_folder_moves_its_sketches_to_the_part_they_are_on() {
 fn dragging_a_sketch_onto_a_part_moves_it_when_another_is_named_like_its_id() {
     let (mut h, component, _) = crate::test_support::component_box();
     let dragged = h.app.run("sketch.create", json!({"name":"Dragged","plane":"XY"})).unwrap()["sketch"].as_u64().unwrap();
+    h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
     h.app.finish_sketch();
     let other = h.app.run("sketch.create", json!({"name":"Other","plane":"XY"})).unwrap()["sketch"].as_u64().unwrap();
+    h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
     h.app.finish_sketch();
     h.app.run("timeline.rename", json!({"feature": other, "name": dragged.to_string()})).unwrap();
     super::apply_drop(&mut h.app, super::DropAction::Component { to: component, folder: "sketches", keys: vec![dragged.to_string()] });

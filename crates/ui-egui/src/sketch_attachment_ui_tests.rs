@@ -489,6 +489,7 @@ fn redefine_panel_names_the_plane_a_sketch_is_on() {
     h.app.run("construct.plane.offset", json!({"base": "XY", "offset": 10, "name": "Shelf"})).unwrap();
     for (plane, expected) in [("XZ", "The XZ plane"), ("Shelf", "Shelf")] {
         let id = h.app.run("sketch.create", json!({"plane": plane})).unwrap()["sketch"].as_u64().unwrap();
+        h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
         h.app.run("sketch.finish", json!({})).unwrap();
         let FeatureKind::Sketch { plane: on, .. } = &h.app.session.doc.feature(id).unwrap().kind else { panic!("a sketch") };
         assert_eq!(plane_description(&h.app.session.doc, on), expected, "{plane}");
@@ -508,6 +509,7 @@ fn redefine_panel_current_plane_row_grows_for_a_long_plane_name() {
     let name = "Bracket mounting plane offset above the base plate";
     h.app.run("construct.plane.offset", json!({"base": "XY", "offset": 10, "name": name})).unwrap();
     let sketch = h.app.run("sketch.create", json!({"plane": name})).unwrap()["sketch"].as_u64().unwrap();
+    h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
     crate::browser::redefine_sketch(&mut h.app, sketch);
     h.frames(5);
