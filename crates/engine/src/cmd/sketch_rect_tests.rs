@@ -592,6 +592,7 @@ fn a_model_sketch_edited_with_a_drawing_open_takes_snaps_and_design_units() {
     let mut s = Session::default();
     run(&mut s, "solid.box", json!({"length": 60, "width": 40, "height": 10}));
     let other = run(&mut s, "sketch.create", json!({"plane": "XY", "name": "Other"}))["sketch"].as_u64().unwrap();
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     run(&mut s, "drawing.create", json!({"name": "Sheet"}));
     assert!(s.open_drawing.is_some());

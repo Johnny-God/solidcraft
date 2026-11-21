@@ -1502,6 +1502,7 @@ fn renaming_a_feature_evaluates_nothing() {
     // A sketch on the plane names it by id (#1134): renaming the plane changes no reference,
     // so it now evaluates nothing — the name follows everywhere without a rebuild.
     run(&mut s, "sketch.create", json!({"plane": "Shelf", "name": "Top"}));
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     s.evaluations = 0;
     run(&mut s, "timeline.rename", json!({"feature": "Shelf", "name": "Ledge"}));

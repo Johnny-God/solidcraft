@@ -1052,6 +1052,7 @@ fn a_change_that_shows_the_same_draws_no_view() {
     let checkpoint = run(&mut s, "edit.checkpoint", json!({}))["checkpoint"].clone();
     run(&mut s, "drawing.close", json!({}));
     run(&mut s, "sketch.create", json!({"plane": "XY", "name": "Note"}));
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     run(&mut s, "drawing.open", drawing.clone());
     assert!(!Arc::ptr_eq(&state, &s.world_state().unwrap()), "a new world state");

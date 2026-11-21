@@ -3841,6 +3841,7 @@ mod tests {
         let b = run(&mut s, "component.create", json!({"name": "B"}));
         run(&mut s, "solid.box", json!({"length": 5, "width": 5, "height": 5}));
         run(&mut s, "sketch.create", json!({"plane": "XY"}));
+        run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
         run(&mut s, "sketch.finish", json!({}));
         let c = run(&mut s, "component.create", json!({"name": "C"}));
         run(&mut s, "component.activate", json!({"component": 0}));

@@ -345,6 +345,7 @@ mod tests {
     fn pasting_features_rejects_an_ambiguous_destination_component() {
         let mut source = Session::default();
         run(&mut source, "sketch.create", json!({"plane":"XY","name":"Source"}));
+        run(&mut source, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
         run(&mut source, "sketch.finish", json!({}));
         run(&mut source, "timeline.copy", json!({"features":["Source"]}));
         let mut target = Session::default();

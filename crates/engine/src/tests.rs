@@ -3687,6 +3687,7 @@ fn components_occurrences_and_world_placement() {
     assert!(receiver["bodies"].as_array().unwrap().iter().any(|b| b == "Base"), "{receiver}");
     assert_eq!(bbox(&mut s, "Base")["min"], json!([0.0, 0.0, 0.0]));
     run(&mut s, "sketch.create", json!({"plane": "XY", "name": "S1"}));
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     run(&mut s, "component.move_sketches", json!({"sketches": ["S1"], "component": cid}));
     assert_eq!(s.doc.find_feature("S1").unwrap().component, cid);

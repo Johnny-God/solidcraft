@@ -74,6 +74,7 @@ fn redefining_a_construction_plane_keeps_its_existing_name() {
     let mut s = Session::default();
     let id = run(&mut s, "construct.plane.offset", json!({"base": "XY", "offset": 10, "name": "Mid"}))["feature"].as_u64().unwrap();
     run(&mut s, "sketch.create", json!({"plane": "Mid", "name": "Profile"}));
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     run(
         &mut s,
@@ -787,6 +788,7 @@ fn ambiguous_plane_aliases_refuse_without_document_or_history_changes() {
         let mut s = Session::default();
         run(&mut s, "parameters.add", json!({"name":"height","expression":"19.05 mm"}));
         run(&mut s, "sketch.create", json!({"plane":alias}));
+        run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
         run(&mut s, "sketch.finish", json!({}));
         let made = run(&mut s, "construct.plane.offset", json!({"base":{"origin":[0,0,0],"normal":[0,0,1]},"offset":"height","name":"Lid"}));
         let id = made["feature"].as_u64().unwrap();
@@ -1043,6 +1045,7 @@ fn construction_planes_cannot_take_origin_plane_names() {
     }
     // Other features may still use the names; only a plane parameter could confuse them.
     run(&mut s, "sketch.create", json!({"plane":"XY"}));
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     run(&mut s, "timeline.rename", json!({"feature":"Sketch1","name":"Top"}));
     run(&mut s, "timeline.rename", json!({"feature":id,"name":"Topside"}));

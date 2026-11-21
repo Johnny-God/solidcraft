@@ -226,6 +226,7 @@ fn projection_from_a_later_sketch_explains_timeline_order_without_changes() {
     for restore_marker in [Value::Null, json!(false)] {
         let mut s = Session::default();
         let earlier = run(&mut s, "sketch.create", json!({"plane":"XY", "name":"Earlier"}))["sketch"].clone();
+        run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
         run(&mut s, "sketch.finish", json!({}));
         let later = run(&mut s, "sketch.create", json!({"plane":"XY", "name":"Later"}))["sketch"].clone();
         run(&mut s, "sketch.line", json!({"points":[[0,0],[20,10]], "ids":["source_line"]}));
@@ -262,6 +263,7 @@ fn projection_from_a_later_sketch_explains_timeline_order_without_changes() {
 fn projection_uses_timeline_order_after_reordering_sketches() {
     let mut s = Session::default();
     let target = run(&mut s, "sketch.create", json!({"plane":"XY", "name":"Target"}))["sketch"].clone();
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     let source = run(&mut s, "sketch.create", json!({"plane":"XY", "name":"Source"}))["sketch"].clone();
     run(&mut s, "sketch.line", json!({"points":[[2,3],[20,10]], "ids":["source_line"]}));
@@ -459,6 +461,7 @@ fn project_edges_bodies_sketches_and_origin() {
 fn a_construction_axis_projects_and_stays_linked() {
     let mut s = Session::default();
     let sketch = run(&mut s, "sketch.create", json!({"plane": "XY"}))["sketch"].as_u64().unwrap();
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     let axis = |x: f64| json!({"a": {"point": [x, 0, 0]}, "b": {"point": [x, 30, 0]}, "name": "Axis1"});
     run(&mut s, "construct.axis.two_points", axis(10.0));

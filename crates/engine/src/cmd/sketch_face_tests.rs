@@ -158,6 +158,7 @@ fn nested_offset_retains_exact_attachment_during_height_change() {
     run(&mut s, "solid.box", json!({"length":10,"width":10,"height":10,"body_name":"Base","name":"BaseFeature"}));
     let pick = top_pick(&s, "Base");
     let id = run(&mut s, "sketch.create", json!({"plane":pick,"offset":"3 mm","project_edges":false}))["sketch"].as_u64().unwrap();
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     let height = s.doc.find_feature("BaseFeature").unwrap().param_names[2].clone();
     run(&mut s, "parameters.change", json!({"name":height,"expression":"20 mm"}));
@@ -317,6 +318,7 @@ fn legacy_or_fixed_rebind_needs_explicit_author_path_for_repeated_owner() {
     let mut pick = top_pick(&s, "Base");
     pick["fixed"] = json!(true);
     let id = run(&mut s, "sketch.create", json!({"plane":pick}))["sketch"].as_u64().unwrap();
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     let second = run(&mut s, "occurrence.copy", json!({"occurrence":part["occurrence"],"translate":[20,0,0]}))["occurrence"].as_u64().unwrap();
     run(&mut s, "component.activate", json!({"component":0}));
@@ -337,6 +339,7 @@ fn replacement_producer_with_same_body_name_cannot_heal_lost_anchor() {
     run(&mut s, "solid.box", json!({"length":10,"width":10,"height":10,"body_name":"Base","name":"Original"}));
     let pick = top_pick(&s, "Base");
     let id = run(&mut s, "sketch.create", json!({"plane":pick,"project_edges":false}))["sketch"].as_u64().unwrap();
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     run(&mut s, "timeline.suppress", json!({"feature":"Original","suppressed":true}));
     run(&mut s, "timeline.rollback", json!({"position":1}));
@@ -410,6 +413,7 @@ fn angled_attachment_tracks_source_plane_and_reopens() {
     run(&mut s, "solid.box", json!({"length":10,"width":10,"height":10,"body_name":"Base","name":"BaseFeature"}));
     let pick = top_pick(&s, "Base");
     let id = run(&mut s, "sketch.create", json!({"plane":pick,"project_edges":false}))["sketch"].as_u64().unwrap();
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     let solidcraft_doc::FeatureKind::Sketch { plane, .. } = &mut s.doc_mut().feature_mut(id).unwrap().kind else { panic!("not sketch") };
     *plane = solidcraft_doc::PlaneRef::AtAngle {
@@ -828,6 +832,7 @@ fn a_sketch_on_the_mirrored_half_of_a_combined_body_sits_on_that_half() {
     ] {
         let p = pick(&s, normal, point);
         let id = run(&mut s, "sketch.create", json!({"name":name,"plane":p,"project_edges":false}))["sketch"].as_u64().unwrap();
+        run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
         run(&mut s, "sketch.finish", json!({}));
         let plane = s.model.state().sketch(id).unwrap().plane;
         assert!(plane.normal().dot(normal) > 0.999, "{name}: normal {:?}", plane.normal());
@@ -858,6 +863,7 @@ fn a_sketch_on_the_ring_of_a_lid_underside_parted_by_its_lip_keeps_the_cap() {
     let pick = json!({"body":"Lid","index":ring,"face":[at.x, at.y, at.z]});
     drop(world);
     let id = run(&mut s, "sketch.create", json!({"name":"On ring","plane":pick,"project_edges":false}))["sketch"].as_u64().unwrap();
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     let plane = s.model.state().sketch(id).unwrap().plane;
     assert!(plane.normal().dot(-Vec3::Z) > 0.999 && (plane.origin.z - 25.).abs() < 1e-6, "{plane:?}");

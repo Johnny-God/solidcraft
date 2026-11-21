@@ -2152,6 +2152,7 @@ fn nothing_can_be_put_into_a_virtual_component() {
     let mut s = cabled();
     run(&mut s, "solid.box", json!({"length": 5, "width": 5, "height": 5, "corner": [0, -30, 0], "body_name": "Loose"}));
     run(&mut s, "sketch.create", json!({"plane": "XY", "name": "S9"}));
+    run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut s, "sketch.finish", json!({}));
     // Placed once, so moving bodies into it is refused for being virtual, not for its placements.
     run(&mut s, "component.create", json!({"name": "Tape", "virtual": true}));

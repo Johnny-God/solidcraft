@@ -1255,6 +1255,7 @@ mod tests {
     fn configuration_rows_reject_invalid_suppression_without_changes() {
         let mut s = Session::default();
         run(&mut s, "sketch.create", json!({"plane":"XY", "name":"TestSketch"}));
+        run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
         run(&mut s, "sketch.finish", json!({}));
         run(&mut s, "config.configure", json!({"features":["TestSketch"]}));
         let before = s.doc.clone();
@@ -1277,6 +1278,7 @@ mod tests {
     fn configuration_rows_validate_inherited_suppression_and_allow_repair() {
         let mut s = Session::default();
         run(&mut s, "sketch.create", json!({"plane":"XY", "name":"TestSketch"}));
+        run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
         run(&mut s, "sketch.finish", json!({}));
         run(&mut s, "config.configure", json!({"features":["TestSketch"]}));
         // A row saved by an older reader may already contain invalid suppression text.
@@ -1299,6 +1301,7 @@ mod tests {
     fn configuration_rows_keep_supported_suppression_spellings() {
         let mut s = Session::default();
         run(&mut s, "sketch.create", json!({"plane":"XY", "name":"TestSketch"}));
+        run(&mut s, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
         run(&mut s, "sketch.finish", json!({}));
         run(&mut s, "config.configure", json!({"features":["TestSketch"]}));
         for (value, suppressed) in [

@@ -110,6 +110,7 @@ mod tests {
 
             let mut sheet = Session { param_check: level, ..Session::default() };
             run(&mut sheet, "sketch.create", json!({"plane":"XY"}));
+            run(&mut sheet, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
             run(&mut sheet, "sketch.finish", json!({}));
             let drawing = run(&mut sheet, "drawing.create", json!({}));
             let made = run(&mut sheet, "drawing.sketch.create", json!({"owner":drawing["sheets"][0]["id"]}));

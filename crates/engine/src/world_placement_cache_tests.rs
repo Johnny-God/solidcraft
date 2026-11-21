@@ -272,6 +272,7 @@ fn world_cache_requires_exact_design_model_pending_and_author_context() {
     let first = created["occurrence"].as_u64().unwrap();
     run(&mut session, "solid.box", json!({"length":2,"width":3,"height":4,"body_name":"Block","operation":"new"}));
     let sketch = run(&mut session, "sketch.create", json!({"plane":"XY"}))["sketch"].as_u64().unwrap();
+    run(&mut session, "sketch.line", json!({"points": [[0, 0], [10, 0]]}));
     run(&mut session, "sketch.finish", json!({}));
     let second = run(&mut session, "occurrence.copy", json!({"occurrence":first}))["occurrence"].as_u64().unwrap();
     let initial = session.world_state().unwrap();
