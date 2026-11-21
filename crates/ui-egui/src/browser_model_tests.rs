@@ -105,6 +105,7 @@ fn feature_indices_follow_component_edits_and_undo() {
     assert!(super::model_feature_indices(&h.app, 0, true).is_empty());
     rows_find_what_the_session_finds(&mut h);
     h.app.run("sketch.create", json!({"plane":"XY", "name":"Root sketch"})).unwrap();
+    h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
     super::prepare_model(&mut h.app);
     assert_eq!(super::entries(&h.app, 0, "sketches")[0].label, "Root sketch");
@@ -112,11 +113,15 @@ fn feature_indices_follow_component_edits_and_undo() {
     rows_find_what_the_session_finds(&mut h);
     h.app.run("component.activate", json!({"component":component})).unwrap();
     h.app.run("sketch.create", json!({"plane":"YZ", "name":"Part sketch"})).unwrap();
+    h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
     super::prepare_model(&mut h.app);
     assert_eq!(super::entries(&h.app, component, "sketches")[0].label, "Part sketch");
     assert_eq!(super::entries(&h.app, 0, "sketches").len(), 1);
     rows_find_what_the_session_finds(&mut h);
+    // #19654 deletes empty sketches on finish, so the part sketch has a line: drawing it and
+    // creating the sketch are separate undo steps.
+    h.app.run("edit.undo", json!({})).unwrap();
     h.app.run("edit.undo", json!({})).unwrap();
     super::prepare_model(&mut h.app);
     assert!(super::entries(&h.app, component, "sketches").is_empty());

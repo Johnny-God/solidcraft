@@ -3314,15 +3314,22 @@ pub(crate) mod tests {
     #[test]
     fn engine_batch_runs_in_one_frame() {
         let mut h = crate::scenario::Harness::new();
+        // #19654 deletes empty sketches on finish: each sketch gets a line so the 40 stay.
         let steps: Vec<_> = (0..40)
-            .flat_map(|_| [json!({"command": "sketch.create", "params": {"plane": "XY"}}), json!({"command": "sketch.finish", "params": {}})])
+            .flat_map(|_| {
+                [
+                    json!({"command": "sketch.create", "params": {"plane": "XY"}}),
+                    json!({"command": "sketch.line", "params": {"points": [[0, 0], [10, 0]]}}),
+                    json!({"command": "sketch.finish", "params": {}}),
+                ]
+            })
             .collect();
         let (v, frames) = h.call_queued("engine.batch", json!({"commands": steps}));
         assert_eq!(v["ok"], true, "{v}");
-        assert_eq!(v["result"]["completed"], 80, "{v}");
-        assert_eq!(v["result"]["results"].as_array().map(Vec::len), Some(80));
+        assert_eq!(v["result"]["completed"], 120, "{v}");
+        assert_eq!(v["result"]["results"].as_array().map(Vec::len), Some(120));
         assert!(v["result"].get("failed").is_none(), "{v}");
-        assert!(frames <= 2, "a batch of 80 steps took {frames} frames");
+        assert!(frames <= 2, "a batch of 120 steps took {frames} frames");
         assert_eq!(inspect(&mut h)["sketches"].as_array().map(Vec::len), Some(40));
     }
 
