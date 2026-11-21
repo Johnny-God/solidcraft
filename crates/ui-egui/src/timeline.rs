@@ -2391,6 +2391,8 @@ mod tests {
         let mut h = Harness::new();
         assert_eq!(h.call("ui.prefs", json!({"history_bar_groups": true}))["ok"], true);
         h.app.run("sketch.create", json!({"plane": "XY", "name": "Root sketch"})).unwrap();
+        // A sketch with a line: #19654 deletes an empty sketch when it is finished.
+        h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
         h.app.run("sketch.finish", json!({})).unwrap();
         let rig = h.app.run("component.create", json!({"name": "Rig"})).unwrap()["component"].as_u64().unwrap();
         let mut ids = std::collections::HashMap::from([("Rig", rig)]);
@@ -2400,6 +2402,7 @@ mod tests {
             ids.insert(part, id);
             for i in 0..count {
                 h.app.run("sketch.create", json!({"plane": "XY", "name": format!("{part}{i}")})).unwrap();
+                h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
                 h.app.run("sketch.finish", json!({})).unwrap();
             }
         }

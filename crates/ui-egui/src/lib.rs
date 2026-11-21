@@ -3458,7 +3458,7 @@ impl SolveApp {
     /// open (always orthographic) or when the #2682 mode is on: then the view is orthographic
     /// exactly when the camera faces a standard axis view, and perspective otherwise.
     pub fn perspective_view(&self) -> bool {
-        if self.session.active_sketch.is_some() {
+        if crate::sketch_view::active_sketch(self).is_some() {
             return false;
         }
         if self.ui.auto_ortho_faces {

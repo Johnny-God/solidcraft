@@ -13540,6 +13540,8 @@ fn production_content_harness(combined_history: bool, assistant: bool) -> crate:
     h.app.agent_chat.open = assistant;
     for name in ["First", "Second"] {
         h.app.run("sketch.create", serde_json::json!({"plane":"XY","name":name})).unwrap();
+        // A sketch with a line: #19654 deletes an empty sketch when it is finished.
+        h.app.run("sketch.line", serde_json::json!({"points": [[0, 0], [10, 0]]})).unwrap();
         h.app.run("sketch.finish", serde_json::json!({})).unwrap();
     }
     h.app.disable_panel_runtime().unwrap();

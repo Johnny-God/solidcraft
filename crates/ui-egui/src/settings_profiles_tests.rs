@@ -38,9 +38,10 @@ fn panel_arrow_bindings_and_cleared_defaults_survive_profile_export_import_and_a
 fn a_profile_holds_input_and_interface_settings_but_not_the_machine() {
     let keys: Vec<&str> = keys().collect();
     // Test change: show_design_view_switcher, the setting the owner asked for, is a portable key.
+    // Test change: 109 to 108, as #19652 removed the portable key design_sub_tab_sketches (no Sketch view kind).
     assert_eq!(
         keys.len(),
-        109,
+        108,
         "include document browser visibility and sizing, the repeated-shortcut preference and the browser scroll wheel preferences among the current portable settings"
     );
     for key in [
@@ -921,7 +922,8 @@ fn profile_keys_cover_the_current_portable_preferences() {
     let mut actual: Vec<_> = keys().collect();
     actual.sort_unstable();
     // Test change: one more portable key, show_design_view_switcher, the setting the owner asked for.
-    assert_eq!(expected.len(), 109);
+    // Test change: 109 to 108, as #19652 removed the portable key design_sub_tab_sketches (no Sketch view kind).
+    assert_eq!(expected.len(), 108);
     assert_eq!(actual, expected);
 }
 
