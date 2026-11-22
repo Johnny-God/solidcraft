@@ -1258,22 +1258,10 @@ fn deleting_sketch_entities_ignores_a_canvas_removed_by_undo() {
             app.tree.picked_canvases.push(kept);
         }
         crate::delete::delete_selection(&mut app);
-        if include_existing_canvas {
-            // #19654: a selection including a canvas is an object delete, which finishes the open
-            // sketch first (owner-approved) and offers Edit sketch; it deletes the canvas, not the line.
-            assert_eq!(app.session.active_sketch, None, "the canvas delete finished the sketch");
-            let notice = app.sketch_notices.latest_for(app.session.uid, 0).expect("Edit sketch is offered");
-            assert_eq!(notice.sketch, sketch);
-            assert!(!app.session.model.state().sketch(sketch).unwrap().sketch.curves.is_empty(), "the finished sketch keeps its line");
-            assert!(!app.session.doc.canvases.iter().any(|canvas| canvas.id == kept), "the picked canvas is deleted");
-            app.run("edit.undo", json!({})).unwrap();
-            assert!(app.session.doc.canvases.iter().any(|canvas| canvas.id == kept), "Undo brings the canvas back");
-        } else {
-            assert!(app.session.model.state().sketch(sketch).unwrap().sketch.curves.is_empty(), "a removed canvas must not block deleting the line");
-            assert!(app.session.doc.canvases.iter().any(|canvas| canvas.id == kept));
-            // Deleting the line alone remains one undoable step.
-            app.run("edit.undo", json!({})).unwrap();
-        }
+        assert!(app.session.model.state().sketch(sketch).unwrap().sketch.curves.is_empty(), "a removed canvas must not block deleting the line");
+        assert_eq!(app.session.doc.canvases.iter().any(|canvas| canvas.id == kept), !include_existing_canvas);
+        // Deleting the line and any existing selected canvas remains one undoable step.
+        app.run("edit.undo", json!({})).unwrap();
         assert!(app.session.model.state().sketch(sketch).unwrap().sketch.curves.iter().any(|curve| curve.id == line));
         assert!(app.session.doc.canvases.iter().any(|canvas| canvas.id == kept));
         assert!(!app.session.doc.canvases.iter().any(|canvas| canvas.id == removed));

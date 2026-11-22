@@ -1513,9 +1513,6 @@ fn a_sketch_line_wakes_its_middle_for_move() {
     h.app.run("sketch.create", json!({"plane": "XY", "name": "S"})).unwrap();
     h.app.run("sketch.line", json!({"points": [[60, 0], [80, 0]], "ids": ["l"]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
-    // Since #19653 a sketch made by a command turns the view to face it, as one drawn in the
-    // view does: let that turn end before the camera is set.
-    h.settle();
     h.app.cam.distance = 200.0;
     h.settle();
     h.app.start("solid.move");
@@ -1605,9 +1602,6 @@ fn woken_points_of_a_hidden_sketch_sleep() {
     h.app.run("sketch.create", json!({"plane": "XY", "name": "S"})).unwrap();
     h.app.run("sketch.line", json!({"points": [[60, 0], [80, 0]], "ids": ["l"]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
-    // Since #19653 a sketch made by a command turns the view to face it, as one drawn in the
-    // view does: let that turn end before the camera is set.
-    h.settle();
     h.app.cam.distance = 200.0;
     h.settle();
     h.app.start("solid.move");
@@ -1647,9 +1641,6 @@ fn box_and_sketch_line(point: Option<[f64; 2]>) -> crate::scenario::Harness {
         h.app.run("sketch.point", json!({"point": p, "id": "q"})).unwrap();
     }
     h.app.run("sketch.finish", json!({})).unwrap();
-    // Since #19653 a sketch made by a command turns the view to face it, as one drawn in the
-    // view does: let that turn end before the camera is set.
-    h.settle();
     h.app.cam.distance = 200.0;
     h.settle();
     h

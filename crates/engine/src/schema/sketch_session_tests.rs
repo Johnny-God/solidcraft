@@ -861,7 +861,6 @@ fn edit_start_metadata_is_semantic_and_mixed_setters_preserve_visibility() {
         "timeline.rename",
         "browser.visibility",
         "select.set",
-        "drawing.dimension.edit",
         "drawing.open",
         "tab.view.layout",
         "tab.view.move",
@@ -871,6 +870,9 @@ fn edit_start_metadata_is_semantic_and_mixed_setters_preserve_visibility() {
             assert!(!spec.starts_edit(&json!({})), "{id}");
         }
     }
+    // #19654: a drawing dimension's editor finishes the open sketch as a note's does (the drawing
+    // tool policy), so drawing.dimension.edit is no longer among the commands that keep it.
+    assert!(crate::find_command("drawing.dimension.edit").unwrap().starts_edit(&json!({})));
     let note = crate::find_command("note.update").unwrap();
     assert!(!note.starts_edit(&json!({"note":1,"hidden":true})));
     assert!(note.starts_edit(&json!({"note":1,"text":"Changed"})));

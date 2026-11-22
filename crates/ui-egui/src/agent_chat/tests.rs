@@ -5704,9 +5704,6 @@ fn shared_assistant_harness() -> (crate::scenario::Harness, Script) {
     h.app.agent_chat.state = Some(State::Ready);
     h.app.agent_chat.input = "Retained responsive composer draft".into();
     h.app.agent_chat.items.push(Item::Agent { thought: false, text: "A retained conversation".into() });
-    // Since #19653 a sketch made by a command turns the view to face it; this test keeps the
-    // camera the design had, so the sketch doesn't turn it.
-    h.app.preferences.sketch_open_look_at = false;
     h.app.run("sketch.create", json!({"plane":"XY","name":"Retained profile"})).unwrap();
     h.app.run("sketch.line", json!({"points": [[0, 0], [10, 0]]})).unwrap();
     h.app.run("sketch.finish", json!({})).unwrap();
