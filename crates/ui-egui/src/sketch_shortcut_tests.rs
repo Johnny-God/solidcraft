@@ -246,11 +246,21 @@ fn move_key_keeps_sketch_mode_behavior_and_honors_a_sketch_move_binding() {
     let selection = vec![Sel::SketchCurve { id: "l1".into(), sketch: None }];
     h.app.session.selection = selection.clone();
 
+    // #19654: starting another feature tool finishes the open sketch (owner-approved); Move is no
+    // longer disabled in a sketch, so M starts the body Move and offers Edit sketch.
     press(&mut h, "M");
-    assert!(h.app.dialog.is_none(), "the default body Move shortcut is disabled in a sketch");
-    assert_eq!(h.app.session.active_sketch, sketch);
-    assert_eq!(h.app.session.selection, selection);
+    assert_eq!(h.app.session.active_sketch, None, "the default body Move shortcut finished the sketch");
+    let notice = h.app.sketch_notices.latest_for(h.app.session.uid, 0).expect("Edit sketch is offered");
+    assert_eq!(notice.sketch, sketch.unwrap());
+    assert!(matches!(h.app.dialog.as_ref().map(|d| &d.kind), Some(crate::dialogs::Kind::Move { .. })), "M opened the body Move dialog");
+    h.app.dialog = None;
+    h.app.tool = None;
 
+    // Back in the sketch, a sketch move binding still wins M there and keeps the sketch open.
+    h.app.run("sketch.edit", json!({"sketch": sketch.unwrap()})).unwrap();
+    let sketch = h.app.session.active_sketch;
+    assert!(sketch.is_some());
+    h.app.session.selection = selection.clone();
     crate::keymap::bind(&mut h.app, "sketch.move", "M", true).unwrap();
     press(&mut h, "M");
     let dialog = h.app.dialog.as_ref().expect("a rebound M opens Sketch Move in an active sketch");
@@ -453,11 +463,19 @@ fn a_feature_started_while_the_marker_rolls_back_waits_for_it() {
     h.app.edit_feature(sketch);
     h.app.apply_off_thread = Some(std::time::Duration::ZERO);
     h.app.start("solid.extrude");
-    assert_eq!(h.app.session.active_sketch, Some(sketch), "Finish and the marker restore commit together after evaluation");
-    assert!(h.app.deferred.is_some(), "the marker is not rolling back off the window thread");
+    // #19654: starting another feature tool finishes the open sketch at once (owner-approved);
+    // only the evaluation, and so the marker restore and Extrude's dialog, wait for the roll-back.
+    assert_eq!(h.app.session.active_sketch, None, "Extrude finished the sketch at once");
+    let notice = h.app.sketch_notices.latest_for(h.app.session.uid, 0).expect("Edit sketch is offered");
+    assert_eq!(notice.sketch, sketch);
+    assert_eq!(
+        h.app.start_after_roll,
+        Some(("solid.extrude".into(), Some(sketch))),
+        "Extrude waits for the marker to roll back off the window thread"
+    );
     assert!(h.app.dialog.is_none(), "Extrude opened before the marker was back");
     for _ in 0..500 {
-        if h.app.deferred.is_none() && h.app.deferred_queue.is_empty() {
+        if h.app.deferred.is_none() && h.app.deferred_queue.is_empty() && h.app.start_after_roll.is_none() {
             break;
         }
         h.frames(1);

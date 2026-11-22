@@ -796,8 +796,17 @@ fn toast_stays_in_free_content_above_history_and_navigation() {
                     let content = crate::shell::content_rect(&h.app, layout.viewport);
                     let mut obstacles = crate::shell::covered_rects(&h.app);
                     obstacles.extend([layout.navigation, layout.axis_view]);
-                    // The default place: the bottom of the corner column (#7893).
-                    let free = corner_free(content, &obstacles);
+                    // The default place: the bottom of the corner column (#7893), in the view the
+                    // bottom navigation leaves: #19655 lifts window messages above it by the
+                    // navigation's height + NAV_BOTTOM + space_8 (owner-approved).
+                    let mut view = crate::shell::bottom_readout_rect(&h.app, content);
+                    if h.app.preferences.navigation_bar.edge == crate::ui_kit::NavigationEdge::Bottom {
+                        let clearance = crate::ui_kit::NavigationMetrics::for_size(h.app.preferences.navigation_bar.size).height()
+                            + crate::ui_kit::NAV_BOTTOM
+                            + solidcraft_theme::Tokens::get().space_8;
+                        view.max.y = (view.bottom() - clearance).max(view.top());
+                    }
+                    let free = corner_free(view, &obstacles);
                     if let Some(toast) = crate::scenario::rect_of("toast") {
                         assert!(toast.is_finite() && toast.is_positive());
                         assert!(content.contains_rect(toast), "{mode:?}, {scale}, {width}x{height}: {toast:?}");

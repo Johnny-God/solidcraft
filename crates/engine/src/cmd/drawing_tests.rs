@@ -4548,18 +4548,19 @@ fn a_sheet_sketch_holds_no_model_command() {
     assert!(editing.is_some() && s.sheet_sketching());
     let features = s.doc.features.len();
     run(&mut s, "solid.box", json!({"length": 5, "width": 5, "height": 5, "corner": [60, 0, 0], "operation": "new"}));
-    assert_eq!(s.doc.features.len(), features + 1, "the model changes under the sheet sketch");
-    assert_eq!(s.active_sheet_sketch, editing, "which stays open");
+    // #19654: starting another feature tool finishes the open sketch (owner-approved), the sheet's too.
+    assert_eq!(s.doc.features.len(), features + 1, "the model changes");
+    assert!(s.active_sheet_sketch.is_none() && !s.sheet_sketching(), "after the sheet sketch was finished");
     assert_eq!(s.undo.last().unwrap().part, None, "the box is the model's step");
     s.model_focus = true;
     assert!(!s.sheet_sketching(), "with the model shown, the sketch tools are the model's");
     run(&mut s, "edit.undo", json!({}));
     assert_eq!(s.doc.features.len(), features, "the model's undo");
-    assert_eq!(s.active_sheet_sketch, editing, "leaves the sheet sketch being edited");
+    assert!(s.active_sheet_sketch.is_none(), "leaves the sheet sketch finished");
     s.model_focus = false;
     run(&mut s, "sketch.create", json!({"plane": "XY"}));
     assert!(s.active_sketch.is_some(), "the model's sketch is entered");
-    assert!(s.active_sheet_sketch.is_none(), "and the sheet sketch is finished, its edits kept in the drawing");
+    assert!(s.active_sheet_sketch.is_none(), "with no sheet sketch open, its edits kept in the drawing");
 }
 
 /// An open drawing changes whether no model command can run: every `Part::Model` command is
