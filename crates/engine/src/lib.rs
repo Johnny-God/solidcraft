@@ -4330,6 +4330,7 @@ fn same_but_features(a: &Document, b: &Document) -> bool {
         format_pending,
         name,
         units,
+        description,
         metadata,
         params,
         text_params,
@@ -4374,6 +4375,7 @@ fn same_but_features(a: &Document, b: &Document) -> bool {
         && *format_pending == b.format_pending
         && *name == b.name
         && *units == b.units
+        && *description == b.description
         && *metadata == b.metadata
         && *params == b.params
         && *text_params == b.text_params

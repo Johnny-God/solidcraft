@@ -2649,7 +2649,7 @@ impl Session {
         self.container_bytes(path, compression, preview, cache, Some(save), true)
     }
 
-    fn container_bytes(
+    pub(crate) fn container_bytes(
         &self,
         path: Option<&str>,
         compression: solidcraft_io::DesignCompression,
