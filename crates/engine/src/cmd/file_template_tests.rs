@@ -19,6 +19,7 @@ impl Templates {
         let lock = TEMPLATES_TEST_LOCK.lock().unwrap_or_else(|e| e.into_inner());
         let dir = solidcraft_io::vfs::temp_dir().join(format!("solidcraft-templates-{}-{name}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
         *TEMPLATES_DIR.lock().unwrap_or_else(|e| e.into_inner()) = Some(dir.to_string_lossy().replace('\\', "/"));
         Self { _lock: lock, dir }
     }

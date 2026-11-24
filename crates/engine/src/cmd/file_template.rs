@@ -191,7 +191,9 @@ fn list(_s: &mut Session, p: &Value) -> Result<Value> {
             .and_then(|(time, _)| time.duration_since(std::time::UNIX_EPOCH).ok())
             .map(|since| since.as_secs());
         templates.push(TemplateInfo {
-            name: metadata.as_ref().map(|m| m.name.trim().to_string()).filter(|n| !n.is_empty()).unwrap_or(stem),
+            // The template's name is its file's: that is what save wrote, and what export and
+            // delete take. The design's own name belongs to the copy, not to the template.
+            name: stem,
             path,
             description: described,
             units: metadata.map(|m| m.units).unwrap_or_default(),
