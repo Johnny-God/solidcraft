@@ -136,6 +136,34 @@ fn template_import_export_byte_identical() {
 }
 
 #[test]
+fn new_design_from_template() {
+    let templates = Templates::new("new-design");
+    let mut s = session();
+    run(&mut s, "file.template.save", json!({"name":"Box","description":"A 10 mm cube"}));
+    let path = templates.path("Box.sc");
+    let template_bytes = std::fs::read(&path).unwrap();
+    let content: Vec<String> = s.doc.features.iter().map(|feature| feature.name.clone()).collect();
+    assert!(!content.is_empty(), "the design the template was saved from has a feature");
+
+    // A new design from the template holds its content, unsaved, under the default name.
+    let mut fresh = session();
+    run(&mut fresh, "file.new", json!({"template":"Box"}));
+    assert_eq!(fresh.doc.name, "Untitled");
+    assert!(fresh.path.is_none(), "a design from a template is unsaved: {:?}", fresh.path);
+    assert_eq!(fresh.doc.features.iter().map(|feature| feature.name.clone()).collect::<Vec<_>>(), content);
+    assert_eq!(fresh.doc.description, "A 10 mm cube");
+
+    // Reading the template changed nothing about it.
+    assert_eq!(std::fs::read(&path).unwrap(), template_bytes);
+
+    // A template that is not there is refused, and the design is left as it was.
+    let before = fresh.doc.clone();
+    let refused = fresh.execute("file.new", &json!({"template":"Nothing"})).unwrap_err().to_string();
+    assert!(refused.contains("no such template"), "{refused}");
+    assert!(std::sync::Arc::ptr_eq(&before, &fresh.doc));
+}
+
+#[test]
 fn description_round_trip() {
     let templates = Templates::new("description");
     let dir = scratch("description");

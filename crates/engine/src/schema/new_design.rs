@@ -18,6 +18,12 @@ pub struct NewDesignParams {
     /// the user's own, so Save As offers it as the file name.
     #[serde(default)]
     pub name: Option<String>,
+    /// The name of a saved template (`file.template.list`) to start the design from: the
+    /// template's own content becomes the new design's, the template file is not changed, and the
+    /// design is unsaved under the default name, like any other new design. Refused when no
+    /// template has that name. Default: none, so the design starts empty.
+    #[serde(default)]
+    pub template: Option<String>,
     /// true opens the new design in a tab of its own, after the active one, and shows it: the
     /// design that was open stays open, as it was, and every command after this one acts on the
     /// new design. It always opens a tab, even when the active design is empty. Only a window with

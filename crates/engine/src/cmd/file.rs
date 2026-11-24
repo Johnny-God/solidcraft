@@ -52,7 +52,7 @@ pub static COMMANDS: &[CommandSpec] = &[
         .noundo()
         .contract(&NEW_DESIGN_CONTRACT)
         .output(output_schema_for::<NewDesignResult>)
-        .params("name?; new_tab?: bool (true opens the design in a tab of its own after the active one and shows it, so the design that was open stays open and every later command acts on the new one; default false: the active design is replaced; the desktop window only) → name, document_id (with new_tab)"),
+        .params("name?; template?: the name of a saved template (file.template.list) to start the design from, so it holds the template's content, unsaved and under the default name; new_tab?: bool (true opens the design in a tab of its own after the active one and shows it, so the design that was open stays open and every later command acts on the new one; default false: the active design is replaced; the desktop window only) → name, document_id (with new_tab)"),
     CommandSpec::new("doc.open", "Open", crate::checked!("doc.open", open)).any_part()
         .icon("open")
         .key("Ctrl+O")
@@ -369,7 +369,16 @@ fn new_doc(s: &mut Session, p: &Value) -> Result<Value> {
         return Err(bad("file.new", NEW_TAB_NEEDS_TABS));
     }
     let name = str_(p, "name").unwrap_or("Untitled");
-    s.replace_design(Session::new(Document::new(name)));
+    let mut document = match str_(p, "template").map(str::trim).filter(|template| !template.is_empty()) {
+        Some(template) => super::file_template::template_document(template)?,
+        None => Document::new(name),
+    };
+    // A design started from a template is named as any other new design is: what the template was
+    // saved under belongs to the template, not to this design.
+    if document.name != name {
+        document.name = name.to_string();
+    }
+    s.replace_design(Session::new(document));
     // A name given here is the user's own, so Save As keeps it (#4907); "Untitled" is none.
     s.user_named = !name.trim().is_empty() && name.trim() != DEFAULT_NAME;
     let reply = NewDesignResult { name: name.to_string(), document_id: None, param_warnings: Vec::new() };

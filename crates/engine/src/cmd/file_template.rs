@@ -13,6 +13,7 @@ use crate::schema::file_template::{
 use crate::schema::{TypedContract, output_schema_for};
 use crate::{Result, Session, params::bad};
 use serde_json::Value;
+use solidcraft_doc::Document;
 
 const SAVE_CONTRACT: TypedContract<TemplateSaveParams> = TypedContract::new();
 const LIST_CONTRACT: TypedContract<TemplateListParams> = TypedContract::new();
@@ -142,6 +143,20 @@ fn write(cmd: &str, path: &str, bytes: &[u8], overwrite: bool) -> Result<()> {
             bad(cmd, format!("could not write {path}: {e}"))
         }
     })
+}
+
+/// The design a template holds, for `file.new {template}`: read the way opening a design reads,
+/// so the new design is the template's content and nothing about the template file changes.
+pub(crate) fn template_document(name: &str) -> Result<Document> {
+    let cmd = "file.new";
+    let name = name_of(cmd, name)?;
+    let path = file_of(cmd, &name)?;
+    if !solidcraft_io::vfs::is_file(&path) {
+        return Err(bad(cmd, format!("{name}: no such template")));
+    }
+    solidcraft_io::read_design_file(&path, None::<fn(solidcraft_io::DesignPreview)>)
+        .map(|(document, _)| document)
+        .map_err(|e| bad(cmd, format!("{name}: {e}")))
 }
 
 fn save(s: &mut Session, p: &Value) -> Result<Value> {
