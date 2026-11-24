@@ -4624,6 +4624,7 @@ impl Document {
             format_pending: crate::format::pending_names(),
             name: name.into(),
             units: default_units(),
+            description: String::new(),
             metadata: Default::default(),
             params: Vec::new(),
             text_params: Vec::new(),
