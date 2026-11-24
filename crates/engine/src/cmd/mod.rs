@@ -170,6 +170,7 @@ mod documents;
 mod file;
 mod file_library;
 pub(crate) use file_library::uses_file as file_library_uses_file;
+mod file_template;
 pub mod frame;
 mod frame_end_cap;
 mod frame_gusset;
@@ -660,6 +661,7 @@ pub fn command_specs() -> Vec<&'static CommandSpec> {
     v.extend(parameter_sweep::COMMANDS.iter());
     v.extend(file::COMMANDS.iter());
     v.extend(file_library::COMMANDS.iter());
+    v.extend(file_template::COMMANDS.iter());
     v.extend(board_import::COMMANDS.iter());
     v.extend(print_face::COMMANDS.iter());
     v.extend(metadata::COMMANDS.iter());

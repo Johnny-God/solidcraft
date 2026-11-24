@@ -766,6 +766,33 @@ pub fn read_design_preview(bytes: &[u8]) -> Option<DesignPreview> {
     DesignContainerReader::new(Cursor::new(bytes)).ok()?.preview()
 }
 
+/// What a listing shows about a design. Read from the file's own part (`document.json`) alone:
+/// no geometry blob is resolved, so a gallery can name every template without opening one.
+/// `None` for a file this build does not read as a design.
+#[derive(Debug, Clone, Default, serde::Deserialize)]
+pub struct DesignMetadata {
+    #[serde(default)]
+    pub name: String,
+    #[serde(default)]
+    pub units: String,
+    #[serde(default)]
+    pub description: String,
+}
+
+/// [`DesignMetadata`] for a design file, container or JSON.
+pub fn read_design_metadata_file(path: &str) -> Option<DesignMetadata> {
+    let mut source = open_regular_file(path).ok()?;
+    let document: Arc<[u8]> = if is_container_source(&mut source).ok()? {
+        DesignContainerReader::new(source).ok()?.reader.document(16 << 20).ok()?
+    } else {
+        source.seek(SeekFrom::Start(0)).ok()?;
+        let mut json = Vec::new();
+        source.read_to_end(&mut json).ok()?;
+        json.into()
+    };
+    serde_json::from_slice(document.as_ref()).ok()
+}
+
 /// Verify a container's provenance entry in memory. `None` when the file has no entry or is not a
 /// container; a bad entry is reported, never an error.
 pub fn read_design_provenance(bytes: &[u8]) -> Option<ProvenanceReport> {

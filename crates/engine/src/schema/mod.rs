@@ -94,6 +94,7 @@ pub mod features;
 pub mod features_more;
 pub mod file;
 pub mod file_library;
+pub mod file_template;
 pub mod frame;
 pub mod frame_plate;
 pub mod gusset;
