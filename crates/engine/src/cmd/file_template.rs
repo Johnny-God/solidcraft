@@ -204,7 +204,7 @@ fn list(_s: &mut Session, p: &Value) -> Result<Value> {
         // The file's own part alone: naming a template never opens one.
         let metadata = solidcraft_io::read_design_metadata_file(&path);
         let stem = file.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
-        let described = metadata.as_ref().map(|m| m.description.trim().to_string()).filter(|d| !d.is_empty());
+        let described = metadata.as_ref().and_then(|m| m.description()).map(str::trim).filter(|d| !d.is_empty()).map(str::to_string);
         let modified = solidcraft_io::vfs::stamp(&path)
             .and_then(|(time, _)| time.duration_since(std::time::UNIX_EPOCH).ok())
             .map(|since| since.as_secs());
