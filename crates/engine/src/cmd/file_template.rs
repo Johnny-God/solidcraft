@@ -165,13 +165,16 @@ fn save(s: &mut Session, p: &Value) -> Result<Value> {
     let name = name_of(cmd, request.name.as_deref().unwrap_or(&s.doc.name))?;
     let path = file_of(cmd, &name)?;
     let overwrite = request.overwrite.unwrap_or(false);
-    // The description lives on the design — that is what makes it reachable when the design is
-    // opened on its own — so the copy and the design agree.
+    // The description is the design's own property — `document.metadata.set`'s `description`, the
+    // one the Design Properties window edits — so the copy and the design agree, and no new
+    // format field is needed for it.
     if let Some(text) = request.description.as_deref() {
         let description = description_of(cmd, text)?;
-        if s.doc.description != description {
-            s.doc_mut().description = description;
-        }
+        let value = if description.is_empty() { Value::Null } else { Value::String(description) };
+        s.doc_mut()
+            .metadata
+            .set(solidcraft_doc::metadata::Owner::Design, solidcraft_doc::metadata::DESCRIPTION, value)
+            .map_err(|e| bad(cmd, e.to_string()))?;
     }
     let bytes = s
         .container_bytes(Some(&path), solidcraft_io::DesignCompression::Fast, false, true, None, true)

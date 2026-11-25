@@ -775,8 +775,17 @@ pub struct DesignMetadata {
     pub name: String,
     #[serde(default)]
     pub units: String,
+    /// The design's own `metadata` object — where its description lives, as the Design
+    /// Properties window writes it.
     #[serde(default)]
-    pub description: String,
+    pub metadata: solidcraft_doc::Metadata,
+}
+
+impl DesignMetadata {
+    /// The description the design carries (`document.metadata.set`'s `description`).
+    pub fn description(&self) -> Option<&str> {
+        self.metadata.description()
+    }
 }
 
 /// [`DesignMetadata`] for a design file, container or JSON.

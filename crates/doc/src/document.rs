@@ -4229,10 +4229,6 @@ pub struct Document {
     pub name: String,
     #[serde(default = "default_units")]
     pub units: String,
-    /// A short line about the design, shown under the name on a template's card. A design made
-    /// from a template keeps its own; empty, and not saved, when the design has none.
-    #[serde(default, skip_serializing_if = "String::is_empty")]
-    pub description: String,
     /// Design properties (project, author…) and other tools' data, kept as they are (#1015).
     #[serde(default, skip_serializing_if = "crate::Metadata::is_empty")]
     pub metadata: crate::Metadata,
@@ -4624,7 +4620,6 @@ impl Document {
             format_pending: crate::format::pending_names(),
             name: name.into(),
             units: default_units(),
-            description: String::new(),
             metadata: Default::default(),
             params: Vec::new(),
             text_params: Vec::new(),

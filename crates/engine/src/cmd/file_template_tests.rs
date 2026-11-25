@@ -70,7 +70,7 @@ fn templates_round_trip() {
     assert!(path.is_file(), "{path:?}");
     // The copy keeps the design's own units, so the gallery can say what a template is in.
     assert_eq!(metadata(&path).units, "in");
-    assert_eq!(metadata(&path).description, "A right-angle bracket");
+    assert_eq!(metadata(&path).description(), Some("A right-angle bracket"));
 
     // The same name again is refused rather than replaced, and the file is left as it was.
     let before = std::fs::read(&path).unwrap();
@@ -80,7 +80,7 @@ fn templates_round_trip() {
 
     // With `overwrite` it replaces the template.
     run(&mut s, "file.template.save", json!({"name":"Bracket","description":"Now a flange","overwrite":true}));
-    assert_eq!(metadata(&path).description, "Now a flange");
+    assert_eq!(metadata(&path).description(), Some("Now a flange"));
 
     let listed = run(&mut s, "file.template.list", json!({}));
     let found = listed["templates"].as_array().unwrap();
@@ -151,7 +151,7 @@ fn new_design_from_template() {
     assert_eq!(fresh.doc.name, "Untitled");
     assert!(fresh.path.is_none(), "a design from a template is unsaved: {:?}", fresh.path);
     assert_eq!(fresh.doc.features.iter().map(|feature| feature.name.clone()).collect::<Vec<_>>(), content);
-    assert_eq!(fresh.doc.description, "A 10 mm cube");
+    assert_eq!(fresh.doc.metadata.description(), Some("A 10 mm cube"));
 
     // Reading the template changed nothing about it.
     assert_eq!(std::fs::read(&path).unwrap(), template_bytes);
@@ -169,17 +169,19 @@ fn description_round_trip() {
     let dir = scratch("description");
     let mut s = session();
 
-    s.doc_mut().description = "A plate with four holes".into();
+    s.doc_mut()
+        .metadata
+        .set(solidcraft_doc::metadata::Owner::Design, solidcraft_doc::metadata::DESCRIPTION, json!("A plate with four holes"))
+        .unwrap();
     let described = templates.path("Plate.sc");
     run(&mut s, "file.save", json!({"path": described, "overwrite": true}));
-    assert_eq!(metadata(&described).description, "A plate with four holes");
+    assert_eq!(metadata(&described).description(), Some("A plate with four holes"));
 
     // A design saved without a description reads back with none, and nothing is written for it.
     let plain = dir.join("Plain.sc");
     let mut bare = session();
-    bare.doc_mut().description.clear();
     run(&mut bare, "file.save", json!({"path": plain, "overwrite": true}));
-    assert_eq!(metadata(&plain).description, "");
+    assert_eq!(metadata(&plain).description(), None);
 
     let _ = std::fs::remove_dir_all(&dir);
 }
