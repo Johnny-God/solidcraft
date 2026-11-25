@@ -164,6 +164,8 @@ pub enum InstallKind {
     },
     Deb,
     Rpm,
+    /// The Arch package, which pacman owns.
+    Arch,
     /// The plain `.tar.gz`, unpacked somewhere.
     LinuxTarball,
     /// Installed by the `.msi` (under Program Files, or in the folder the installer recorded).
@@ -220,6 +222,12 @@ pub fn detect(p: &Probe) -> InstallKind {
                 }
                 if (p.exists)(Path::new("/var/lib/rpm")) || (p.exists)(Path::new("/usr/lib/sysimage/rpm")) {
                     return InstallKind::Rpm;
+                }
+                // pacman keeps no per-package file list to match by name (its entry is
+                // `solidcraft-<version>-<release>/`, version and all), so the distro and a `/usr`
+                // binary stand for pacman ownership: on Arch nothing under `/usr` is unowned.
+                if (p.exists)(Path::new("/etc/arch-release")) {
+                    return InstallKind::Arch;
                 }
                 return InstallKind::Other;
             }
@@ -420,6 +428,7 @@ impl InstallKind {
             InstallKind::Snap { store: false } => "Snap (installed from a file)",
             InstallKind::Deb => ".deb package",
             InstallKind::Rpm => ".rpm package",
+            InstallKind::Arch => "Arch package",
             InstallKind::LinuxTarball => ".tar.gz",
             InstallKind::WindowsMsi => "Windows installer (.msi)",
             InstallKind::WindowsPortable => "portable .zip",
@@ -445,6 +454,7 @@ impl InstallKind {
             }
             InstallKind::Deb => Some(format!("sudo apt install ./{}", asset.unwrap_or("solidcraft-linux-x86_64.deb"))),
             InstallKind::Rpm => Some(format!("sudo dnf install ./{}", asset.unwrap_or("solidcraft-linux-x86_64.rpm"))),
+            InstallKind::Arch => Some(format!("sudo pacman -U ./{}", asset.unwrap_or("solidcraft-linux-x86_64.pkg.tar.zst"))),
             _ => None,
         }
     }
@@ -471,6 +481,7 @@ pub fn asset_name(kind: &InstallKind, arch: &str, version: &str) -> Option<Strin
         InstallKind::Snap { .. } => format!("solidcraft-linux-{}.snap", linux?),
         InstallKind::Deb => format!("solidcraft-linux-{}.deb", linux?),
         InstallKind::Rpm => format!("solidcraft-linux-{}.rpm", linux?),
+        InstallKind::Arch => format!("solidcraft-linux-{}.pkg.tar.zst", linux?),
         InstallKind::LinuxTarball => format!("solidcraft-{version}-linux-{}.tar.gz", linux?),
         InstallKind::WindowsMsi => format!("solidcraft-windows-{}.msi", windows?),
         InstallKind::WindowsPortable => format!("solidcraft-windows-{}-portable.zip", windows?),
@@ -1066,7 +1077,7 @@ pub fn show(app: &mut SolveApp, ctx: &egui::Context) {
                 ui_kit::text(ui, &solidcraft_ui_text::format("update.managed", &[("manager", manager)]), ui_kit::Text::Report("managed", false));
             } else if let Some(cmd) = kind.update_command(asset.as_deref()) {
                 let how = match kind {
-                    InstallKind::Deb | InstallKind::Rpm | InstallKind::Snap { store: false } => "update.package_hint",
+                    InstallKind::Deb | InstallKind::Rpm | InstallKind::Arch | InstallKind::Snap { store: false } => "update.package_hint",
                     _ => "update.system_hint",
                 };
                 ui_kit::text(ui, &solidcraft_ui_text::format(how, &[("kind", kind.label())]), ui_kit::Text::Report("how", false));

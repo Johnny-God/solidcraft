@@ -70,6 +70,9 @@ fn install_kinds_are_told_apart() {
     assert_eq!(probe("linux", true, &[], "/usr/bin/solidcraft", &["/var/lib/dpkg/info/solidcraft.list", "/var/lib/rpm"]), InstallKind::Deb);
     assert_eq!(probe("linux", true, &[], "/usr/bin/solidcraft", &["/var/lib/rpm"]), InstallKind::Rpm);
     assert_eq!(probe("linux", true, &[], "/usr/bin/solidcraft", &["/usr/lib/sysimage/rpm"]), InstallKind::Rpm);
+    assert_eq!(probe("linux", true, &[], "/usr/bin/solidcraft", &["/etc/arch-release"]), InstallKind::Arch);
+    // An Arch machine with the binary somewhere else is the unpacked `.tar.gz`.
+    assert_eq!(probe("linux", true, &[], home, &["/etc/arch-release"]), InstallKind::LinuxTarball);
     assert_eq!(probe("linux", true, &[], "/usr/bin/solidcraft", &[]), InstallKind::Other);
     assert_eq!(probe("linux", true, &[], home, &[]), InstallKind::LinuxTarball);
 
@@ -206,7 +209,19 @@ fn each_installation_gets_its_own_file() {
         InstallKind::Deb.update_command(Some("solidcraft-linux-x86_64.deb")).as_deref(),
         Some("sudo apt install ./solidcraft-linux-x86_64.deb")
     );
+    assert_eq!(
+        InstallKind::Arch.update_command(Some("solidcraft-linux-x86_64.pkg.tar.zst")).as_deref(),
+        Some("sudo pacman -U ./solidcraft-linux-x86_64.pkg.tar.zst")
+    );
     assert_eq!(InstallKind::WindowsMsi.update_command(None), None);
+}
+
+#[test]
+fn the_arch_package_uses_the_releases_fixed_name() {
+    // A release carries each package under a versionless name as well as the versioned one, and
+    // the versionless one is what a `.deb`, `.rpm` or `.snap` installation downloads.
+    assert_eq!(asset_name(&InstallKind::Arch, "x86_64", "0.10.0").as_deref(), Some("solidcraft-linux-x86_64.pkg.tar.zst"));
+    assert_eq!(asset_name(&InstallKind::Arch, "aarch64", "0.10.0").as_deref(), Some("solidcraft-linux-aarch64.pkg.tar.zst"));
 }
 
 #[test]

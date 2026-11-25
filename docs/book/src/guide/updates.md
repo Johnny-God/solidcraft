@@ -37,7 +37,7 @@ Where SolidCraft can replace itself safely, the window also has **Update now**:
 | Windows installer (`.msi`) | **Install (closes SolidCraft)**: downloads and verifies the `.msi`, closes SolidCraft (asking about unsaved designs first) and starts the installer |
 | Windows portable `.zip` or `.exe` | Downloads and verifies the package, swaps in the new `solidcraft.exe` (and `solidcraft-cli.exe`) and offers **Restart now**; the old file is removed at the next start |
 | macOS | **Download and open**: downloads and verifies the `.dmg` and opens it; quit SolidCraft, then drag the new SolidCraft to Applications to replace the old copy (macOS won't replace an app that is running) |
-| Flatpak, Snap, `.deb`, `.rpm`, `.tar.gz` | Nothing: your package manager updates these (the window shows the command), or you unpack the new archive |
+| Flatpak, Snap, `.deb`, `.rpm`, the Arch package, `.tar.gz` | Nothing: your package manager updates these (the window shows the command), or you unpack the new archive |
 
 Every download is verified before anything changes: its SHA-256 must match the release's
 `SHA256SUMS.txt`, fetched over HTTPS from the same release, and, once the project signs its
@@ -62,7 +62,7 @@ install it, and **Download** opens the release page.
 Download 0.15.0 or later once yourself, from the release page or the
 [download links](https://github.com/tangency-labs/solidcraft#download), and install it over the old
 version as you first installed it. From 0.15.0 on, SolidCraft accepts either address, and
-**Update now** works again. Package managers (Flatpak, Snap, WinGet, `.deb`, `.rpm`) aren't
+**Update now** works again. Package managers (Flatpak, Snap, WinGet, `.deb`, `.rpm`, the Arch package) aren't
 affected.
 
 ## What is sent
@@ -129,6 +129,7 @@ and SolidCraft picks the one matching how it was installed:
 | Snap from a downloaded file | `SNAP_REVISION` starts with `x` | `solidcraft-linux-<arch>.snap` | `sudo snap install --dangerous ./solidcraft-linux-<arch>.snap` |
 | `.deb` | under `/usr`, dpkg knows `solidcraft` | `solidcraft-linux-<arch>.deb` | `sudo apt install ./solidcraft-linux-<arch>.deb` |
 | `.rpm` | under `/usr`, an rpm database exists | `solidcraft-linux-<arch>.rpm` | `sudo dnf install ./solidcraft-linux-<arch>.rpm` |
+| Arch package | under `/usr`, `/etc/arch-release` exists | `solidcraft-linux-<arch>.pkg.tar.zst` | `sudo pacman -U ./solidcraft-linux-<arch>.pkg.tar.zst` |
 | `.tar.gz` | anywhere else on Linux | `solidcraft-<version>-linux-<arch>.tar.gz` | Unpack over the old copy |
 | Windows installer | under Program Files, or in the folder the installer recorded | `solidcraft-windows-<arch>.msi` | Run the installer |
 | Windows portable | `solidcraft-cli.exe` beside it | `solidcraft-windows-<arch>-portable.zip` | Unzip over the old copy |
